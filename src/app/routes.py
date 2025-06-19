@@ -34,18 +34,17 @@ def auth():
 
     try:
         customer_type_value = 1 if user_type == 'personal' else 2
-        query = db.session.query(Customer).join(
-            DepositWithdrawalAccount, Customer.CustomerID == DepositWithdrawalAccount.CustomerID
+        account = db.session.query(DepositWithdrawalAccount).join(
+            Customer, DepositWithdrawalAccount.CustomerID == Customer.CustomerID
         ).filter(
             Customer.Name == name,
             Customer.CustomerType == customer_type_value,
             Customer.SSN_BusinessRegNo.like(f"{birth_date}%"),
-            DepositWithdrawalAccount.AccountNumber == account_number,
-            DepositWithdrawalAccount.Password == password
-        )
-        customer = query.first()
+            DepositWithdrawalAccount.AccountNumber == account_number
+        ).first()
 
-        if customer:
+        if account and account.check_password(password):
+            customer = account.customer
             session['user_id'] = customer.CustomerID
             session.pop(AUTH_ATTEMPT_COUNT, None)
             return jsonify({'success': True, 'redirect_url': url_for('main.accounts')})

@@ -1,4 +1,5 @@
 from . import db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class Customer(db.Model):
     """고객 기본정보 테이블 모델"""
@@ -19,10 +20,16 @@ class DepositWithdrawalAccount(db.Model):
     AccountID = db.Column(db.String(10), primary_key=True, comment='입출금 계좌 고유 식별자(10000001)')
     CustomerID = db.Column(db.String(10), db.ForeignKey('Customer.CustomerID'), nullable=False, comment='Customer 테이블의 외래 키')
     AccountNumber = db.Column(db.String(20), unique=True, nullable=False, comment='계좌 번호 (고유)')
-    Password = db.Column(db.String(6), comment='계좌 비밀번호 (암호화 고려)')
+    PasswordHash = db.Column(db.String(128), comment='계좌 비밀번호 (암호화됨)')
     AccountStatus = db.Column(db.Integer, comment='계좌 상태: 활성(1) 비활성(9), 해지(0)')
     BalanceCount = db.Column(db.Integer, comment='계좌 잔액')
     DWNotiService = db.Column(db.Integer, comment='입출금 알림 서비스 신청 상태: 신청(1), 해지(0), 없음(9)')
+
+    def set_password(self, password):
+        self.PasswordHash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.PasswordHash, password)
 
     notification_services = db.relationship('NotificationServiceApplication', backref='account', lazy=True)
 
@@ -39,4 +46,21 @@ class NotificationServiceApplication(db.Model):
     ApplicationStatus = db.Column(db.Integer, comment='신청 상태: 신청(1), 변경(2), 해지(0)')
     ShowBalanceYn = db.Column(db.String(1), comment='잔액표시여부(Y,N)')
     AutoTransferReceiveStartTime = db.Column(db.String(20), comment='자동이체 수신 시작시간(예: 오전9시)')
-    AutoTransferReceiveEndTime = db.Column(db.String(20), comment='자동이체 수신 종료시간(예: 오후10시)') 
+    AutoTransferReceiveEndTime = db.Column(db.String(20), comment='자동이체 수신 종료시간(예: 오후10시)')
+
+class LoanAccount(db.Model):
+    """대출계좌 테이블 모델"""
+    __tablename__ = 'LoanAccount'
+    AccountID = db.Column(db.String(10), primary_key=True)
+    CustomerID = db.Column(db.String(10), db.ForeignKey('Customer.CustomerID'), nullable=False)
+    AccountNumber = db.Column(db.String(20), unique=True, nullable=False)
+    # ... 마이그레이션 파일에 있는 나머지 LoanAccount 컬럼들 ...
+
+class TransactionHistory(db.Model):
+    """거래내역 테이블 모델"""
+    __tablename__ = 'TransactionHistory'
+    TransactionID = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
+    AccountID = db.Column(db.String(10), db.ForeignKey('DepositWithdrawalAccount.AccountID'), nullable=False)
+    # ... 마이그레이션 파일에 있는 나머지 TransactionHistory 컬럼들 ...
+
+# ... (다른 누락된 모델들도 순차적으로 추가 예정) ... 

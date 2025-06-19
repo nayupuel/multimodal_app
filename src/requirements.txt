@@ -3,6 +3,7 @@ Flask-SQLAlchemy
 Werkzeug
 gunicorn
 python-dotenv
+Flask-Migrate
 
 # Environment variables
 python-dotenv>=0.19
