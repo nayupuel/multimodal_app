@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- 보안 헤더: 외부 리소스 로드를 제어 (Talisman의 CSP 설정과 연계) -->
+    
+    <title>{% block title %}BNK 부산은행{% endblock %}</title>
+
+    <!-- Google Fonts: Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- 공통 CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- 페이지별 추가 CSS가 위치할 블록 -->
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>{% block header %}입출금 알림 서비스{% endblock %}</h1>
+        </header>
+        
+        <main>
+            <!-- 각 페이지의 메인 콘텐츠가 여기에 삽입됩니다. -->
+            {% block content %}{% endblock %}
+        </main>
+        
+        <footer>
+            <p>&copy; 2024 BNK Busan Bank. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- 공통 JavaScript -->
+    
+    <!-- 페이지별 추가 JavaScript가 위치할 블록 -->
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

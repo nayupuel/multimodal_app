@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}서비스 상태 확인{% endblock %}
+{% block header %}서비스 상태 확인{% endblock %}
+
+{% block content %}
+<div class="status-check-container" style="text-align: center; padding: 40px 20px;">
+    <p class="description" style="font-size: 1.1em; line-height: 1.6;">
+        {{ message | safe }}
+    </p>
+
+    <div class="button-group" style="margin-top: 30px;">
+        {% if button1_text and button1_url %}
+            <a href="{{ button1_url }}" class="btn btn-primary">{{ button1_text }}</a>
+        {% endif %}
+        {% if button2_text and button2_url %}
+            <a href="{{ button2_url }}" class="btn btn-secondary">{{ button2_text }}</a>
+        {% endif %}
+        <a href="{{ url_for('main.index') }}" class="btn btn-secondary">메인으로 돌아가기</a>
+    </div>
+</div>
+{% endblock %} 
