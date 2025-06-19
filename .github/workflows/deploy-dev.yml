@@ -9,7 +9,7 @@ env:
   AWS_REGION: ap-northeast-2
   S3_BUCKET_NAME: multimodal-app # 당신의 S3 버킷 이름
   CODE_DEPLOY_APPLICATION_NAME: Multimodal # CodeDeploy 애플리케이션 이름
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: Multimodal-Dev # Dev 환경용 배포 그룹 이름
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: Multimodal_Dev # Dev 환경용 배포 그룹 이름
 
 jobs:
   deploy:
