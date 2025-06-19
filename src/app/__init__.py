@@ -5,9 +5,11 @@ from flask import Flask
 from flask_wtf.csrf import CSRFProtect
 from flask_talisman import Talisman
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 # SQLAlchemy 객체 생성
 db = SQLAlchemy()
+migrate = Migrate()
 
 # CSRF 보호를 위한 객체 생성
 csrf = CSRFProtect()
@@ -62,6 +64,7 @@ def create_app(config_class=None):
     # --- 확장 기능 초기화(Extension Initialization) ---
     # SQLAlchemy 초기화
     db.init_app(app)
+    migrate.init_app(app, db)
 
     # CSRF 보호 초기화
     csrf.init_app(app)
