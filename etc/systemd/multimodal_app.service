@@ -1,22 +1,16 @@
 [Unit]
-Description=Gunicorn instance to serve multimodal_app
+Description=Gunicorn instance for multimodal_app
 After=network.target
 
 [Service]
-User=ec2-user # EC2 인스턴스에 접속하는 사용자
-Group=nginx   # Nginx가 소켓에 접근할 수 있도록 Nginx 그룹에 속하게 합니다.
-WorkingDirectory=/home/ec2-user/multimodal_app/backend # Gunicorn 실행 디렉토리 (run.py가 있는 곳)
-Environment="PATH=/home/ec2-user/multimodal_app/backend/venv/bin" # 가상 환경의 bin 경로
-ExecStart=/home/ec2-user/multimodal_app/backend/venv/bin/gunicorn --workers 3 --bind unix:/home/ec2-user/multimodal_app/backend/multimodal_app.sock run:app
-# workers: 워커 프로세스 수 (CPU 코어 수 * 2 + 1 권장)
-# bind: Gunicorn이 사용할 소켓 파일 경로
-# run:app: run.py 파일 내의 Flask 앱 인스턴스 이름 (run.py에서 app = Flask(__name__)으로 정의 시)
-
-# StandardOutput=append:/var/log/gunicorn/multimodal_app_access.log # Access Log (선택 사항)
-# StandardError=append:/var/log/gunicorn/multimodal_app_error.log  # Error Log (선택 사항)
-
-Restart=on-failure # 서비스 실패 시 자동 재시작
-RestartSec=3 # 재시작 시도 전 대기 시간
+User=ec2-user
+Group=nginx
+WorkingDirectory=/home/ec2-user/multimodal_app_deploy/src # 변경된 Gunicorn 실행 디렉토리
+Environment="PATH=/home/ec2-user/multimodal_app_deploy/src/venv/bin" # 변경된 가상 환경 경로
+ExecStart=/home/ec2-user/multimodal_app_deploy/src/venv/bin/gunicorn --workers 3 --bind unix:/home/ec2-user/multimodal_app_deploy/src/multimodal_app.sock run:app
+# run:app: run.py 파일 내의 Flask 앱 인스턴스 이름
+Restart=on-failure
+RestartSec=3
 
 [Install]
 WantedBy=multi-user.target
