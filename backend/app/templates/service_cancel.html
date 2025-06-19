@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+
+{% block title %}입출금 알림 서비스 해지{% endblock %}
+{% block header %}알림 서비스 설정 해지{% endblock %}
+
+{% block content %}
+<p class="description">
+    아래 서비스를 정말로 해지하시겠습니까?
+</p>
+
+{% if settings and account %}
+<div class="summary-box">
+    <h4>현재 신청된 서비스</h4>
+    <ul>
+        <li><strong>알림 대상 계좌:</strong> {{ account.AccountNumber }}</li>
+        <li><strong>알림 채널:</strong> {{ 'SMS (유료)' if settings.NotificationChannel == 'sms' else '앱 푸시 (무료)' }}</li>
+        <li><strong>연락처:</strong> {{ settings.NotificationRecipientNumber }}</li>
+        <li><strong>잔액 표시:</strong> {{ '예' if settings.ShowBalanceYn == 'Y' else '아니요' }}</li>
+    </ul>
+    <p class="warning-text">
+        서비스를 해지하면 더 이상 입출금 내역을 알림으로 받을 수 없습니다.
+    </p>
+</div>
+
+<form id="cancel-form" action="{{ url_for('main.cancel', account_id=account.AccountID) }}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="button-group">
+        <button type="button" class="btn btn-secondary" onclick="location.href='/'">취소</button>
+        <button type="submit" class="btn btn-danger">네, 해지합니다.</button>
+    </div>
+</form>
+{% else %}
+<p>해지할 서비스 내역이 없습니다.</p>
+<div class="button-group">
+    <a href="{{ url_for('main.index') }}" class="btn btn-primary">메인으로 돌아가기</a>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.summary-box {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.summary-box h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ced4da;
+    padding-bottom: 10px;
+}
+.summary-box ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.summary-box ul li {
+    margin-bottom: 10px;
+}
+.warning-text {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 20px;
+}
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+</style>
+{% endblock %}
+
+<script>
+document.getElementById('cancel-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const form = this;
+    const formData = new FormData(form);
+    const resultMessage = document.getElementById('result-message');
+
+    fetch(form.action, {
+        method: 'POST',
+        body: new URLSearchParams(formData),
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.redirect_url) {
+            window.location.href = data.redirect_url;
+        } else {
+            resultMessage.textContent = data.message || '오류가 발생했습니다.';
+            resultMessage.className = 'alert alert-danger';
+        }
+    })
+    .catch(error => {
+        resultMessage.textContent = '오류가 발생했습니다.';
+        resultMessage.className = 'alert alert-danger';
+    });
+});
+</script> 

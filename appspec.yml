@@ -1,0 +1,35 @@
+version: 0.0
+os: linux
+files:
+  - source: /multimodal_app # GitHub Actions가 압축한 패키지 내의 앱 폴더
+    destination: /home/ec2-user/multimodal_app # EC2 인스턴스에 배포될 경로
+
+  - source: /etc/nginx/multimodal_app.conf # 프로젝트 내 Nginx 설정 파일
+    destination: /etc/nginx/conf.d/ # EC2 Nginx 설정 경로
+
+  - source: /etc/systemd/system/multimodal_app.service # 프로젝트 내 Systemd 서비스 파일
+    destination: /etc/systemd/system/ # EC2 Systemd 서비스 경로
+
+hooks:
+  BeforeInstall:
+    - location: scripts/before_install.sh
+      timeout: 300
+      runas: root
+  AfterInstall:
+    - location: scripts/after_install.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: scripts/application_start.sh
+      timeout: 300
+      runas: root
+  ApplicationStop: # 선택 사항: 앱 중지 시 동작 정의 (무중단 배포 시 중요)
+    - location: scripts/application_stop.sh
+      timeout: 300
+      runas: root
+      # runas는 반드시 root여야 합니다.
+
+# 참고: ApplicationStop 훅은 배포 시작 시 실행되어 이전 버전을 중지합니다.
+#      BeforeInstall은 파일 복사 전에 시스템 준비 작업을 합니다.
+#      AfterInstall은 파일 복사 후 의존성 설치, 권한 설정 등을 합니다.
+#      ApplicationStart는 새 버전의 애플리케이션을 시작합니다.

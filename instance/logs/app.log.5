@@ -1,0 +1,43 @@
+2025-06-10 16:26:00,756 INFO: Application startup [in /Users/nayupeul/u+work/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
+2025-06-10 16:26:19,286 INFO: Application startup [in /Users/nayupeul/u+work/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
+2025-06-10 16:26:57,384 INFO: Application startup [in /Users/nayupeul/u+work/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
+2025-06-10 16:26:57,706 INFO: Application startup [in /Users/nayupeul/u+work/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
+2025-06-10 16:27:00,224 INFO: Application startup [in /Users/nayupeul/u+work/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
+2025-06-10 16:27:19,945 INFO: Application startup [in /Users/nayupeul/u+work/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
+2025-06-10 16:27:20,251 INFO: Application startup [in /Users/nayupeul/u+work/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
+2025-06-10 16:30:11,176 INFO: Application startup [in /Users/nayupeul/u+work/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
+2025-06-10 16:30:11,508 INFO: Application startup [in /Users/nayupeul/u+work/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
+2025-06-10 16:30:52,006 INFO: Application startup [in /Users/nayupeul/u+work/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
+2025-06-10 16:30:52,314 INFO: Application startup [in /Users/nayupeul/u+work/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
+2025-06-10 17:00:46,600 INFO: Application startup [in /Users/nayupeul/u+work/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
+2025-06-10 17:00:46,945 INFO: Application startup [in /Users/nayupeul/u+work/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
+2025-06-10 17:06:51,197 INFO: Application startup [in /Users/nayupeul/u+work/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
+2025-06-10 17:06:51,535 INFO: Application startup [in /Users/nayupeul/u+work/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
+2025-06-18 14:18:21,425 INFO: Application startup [in /Users/nayupeul/u+work/Study/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
+2025-06-18 14:18:21,658 INFO: Application startup [in /Users/nayupeul/u+work/Study/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
+2025-06-18 14:18:48,724 ERROR: Authentication error: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances? [in /Users/nayupeul/u+work/Study/mongdb_cli/multimodal_app/backend/app/routes.py:63]
+Traceback (most recent call last):
+  File "/Users/nayupeul/u+work/Study/mongdb_cli/multimodal_app/backend/app/routes.py", line 46, in auth
+    customer = query.first()
+               ^^^^^^^^^^^^^
+  File "/opt/miniconda3/lib/python3.12/site-packages/sqlalchemy/orm/query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/miniconda3/lib/python3.12/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/miniconda3/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2365, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/miniconda3/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2239, in _execute_internal
+    bind = self.get_bind(**bind_arguments)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/miniconda3/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 53, in get_bind
+    engines = self._db.engines
+              ^^^^^^^^^^^^^^^^
+  File "/opt/miniconda3/lib/python3.12/site-packages/flask_sqlalchemy/extension.py", line 690, in engines
+    raise RuntimeError(
+RuntimeError: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances?
+2025-06-18 14:20:31,240 INFO: Application startup [in /Users/nayupeul/u+work/Study/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
+2025-06-18 14:22:39,784 INFO: Application startup [in /Users/nayupeul/u+work/Study/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
+2025-06-18 14:22:39,996 INFO: Application startup [in /Users/nayupeul/u+work/Study/mongdb_cli/multimodal_app/backend/app/__init__.py:52]
