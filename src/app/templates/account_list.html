@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block title %}계좌 목록{% endblock %}
+{% block header %}계좌 목록 조회{% endblock %}
+
+{% block content %}
+<p class="description">
+    서비스를 이용할 계좌를 선택해주세요.<br>
+    계좌별로 입출금 알림 서비스의 가입, 변경, 해지가 가능합니다.
+</p>
+
+<div class="list-container">
+    {% for item in accounts_with_status %}
+    <div class="list-item">
+        <div class="account-header">
+            <div class="account-icon">
+                <img src="{{ url_for('static', filename='images/bank-icon.svg') }}" alt="Bank">
+            </div>
+            <div class="account-details">
+                <div class="bank-name">U+ Bank</div>
+                <div class="account-number">{{ item.account.AccountNumber }}</div>
+            </div>
+        </div>
+        <div class="account-body">
+            <div class="account-balance-info">
+                <div class="balance-label">계좌 잔액</div>
+                <div class="balance-amount">{{ item.balance_str }} 원</div>
+            </div>
+            <div class="account-actions">
+                {% if item.status == '가입' %}
+                    <span class="status-tag subscribed">가입</span>
+                    <a href="{{ url_for('main.change', account_id=item.account.AccountID) }}" class="btn btn-sm btn-secondary">변경</a>
+                    <a href="{{ url_for('main.cancel', account_id=item.account.AccountID) }}" class="btn btn-sm btn-danger">해지</a>
+                {% else %}
+                    <span class="status-tag unsubscribed">미가입</span>
+                    <a href="{{ url_for('main.apply', account_id=item.account.AccountID) }}" class="btn btn-sm btn-primary">신청</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <p class="description">소유하신 입출금 계좌가 없습니다.</p>
+    {% endfor %}
+</div>
+
+<div class="button-group" style="margin-top: 40px;">
+     <a href="{{ url_for('main.index') }}" class="btn btn-secondary">로그아웃</a>
+</div>
+{% endblock %} 

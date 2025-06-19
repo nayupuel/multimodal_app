@@ -1,0 +1,16 @@
+Flask
+Flask-SQLAlchemy
+Werkzeug
+gunicorn
+python-dotenv
+Flask-Migrate
+
+# Environment variables
+python-dotenv>=0.19
+
+# Security (CSRF, secure headers)
+Flask-WTF>=1.0
+Flask-Talisman>=0.8
+
+# WSGI Server (for production)
+gunicorn>=20.1 
