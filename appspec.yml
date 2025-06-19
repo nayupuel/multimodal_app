@@ -1,8 +1,8 @@
 version: 0.0
 os: linux
 files:
-  - source: /multimodal_app # GitHub Actions가 압축한 패키지 내의 앱 폴더
-    destination: /home/ec2-user/multimodal_app # EC2 인스턴스에 배포될 경로
+  - source: /src # GitHub Actions가 압축한 패키지 내의 앱 폴더
+    destination: /home/ec2-user/multimodal_app_deploy/src # EC2에 배포될 기본 경로
 
   - source: /etc/nginx/multimodal_app.conf # 프로젝트 내 Nginx 설정 파일
     destination: /etc/nginx/conf.d/ # EC2 Nginx 설정 경로
