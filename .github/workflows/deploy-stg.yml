@@ -1,0 +1,73 @@
+name: Deploy to Stg Environment
+
+on:
+  push:
+    branches:
+      - stg # stg 브랜치에 푸시될 때 트리거
+
+env:
+  AWS_REGION: ap-northeast-2
+  S3_BUCKET_NAME: multimodal-app # 당신의 S3 버킷 이름
+  CODE_DEPLOY_APPLICATION_NAME: Multimodal # CodeDeploy 애플리케이션 이름
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: MyWebApp-stg # stg 환경용 배포 그룹 이름
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Create deployment package # .zip 파일 생성 (프로젝트 전체 포함)
+        run: |
+          # 프로젝트 루트에서 실행되므로, 이 경로의 모든 것을 포함하고 특정 폴더는 제외
+          zip -r deploy-package.zip . \
+            -x ".git/*" \
+            -x ".github/*" \
+            -x "deploy-package/*" \
+            -x "**/__pycache__/*" \
+            -x "**/venv/*" \
+            -x "**/node_modules/*" # 만약 Node.js 프론트엔드가 있다면
+
+      - name: Upload to S3
+        run: |
+          aws s3 cp deploy-package.zip s3://${{ env.S3_BUCKET_NAME }}/dev/deploy-package.zip
+
+      - name: Create CodeDeploy deployment
+        id: create-deployment
+        run: |
+          DEPLOYMENT_ID=$(aws deploy create-deployment \
+            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+            --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+            --s3-location bucket=${{ env.S3_BUCKET_NAME }},key=dev/deploy-package.zip,bundleType=zip \
+            --description "Deployment from GitHub Actions to Dev" \
+            --query 'deploymentId' --output text)
+          echo "deployment_id=${DEPLOYMENT_ID}" >> $GITHUB_OUTPUT
+
+      - name: Wait for deployment to complete
+        run: |
+          aws deploy wait deployment-successful --deployment-id ${{ steps.create-deployment.outputs.deployment_id }}
+
+      - name: Get EC2 Instance IP for Dev
+        id: get-ec2-ip
+        run: |
+          INSTANCE_ID=$(aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }}" \
+            "Name=instance-state-name,Values=running" \
+            --query "Reservations[0].Instances[0].InstanceId" --output text)
+          if [ -z "$INSTANCE_ID" ]; then echo "Error: No running EC2 instance found for dev"; exit 1; fi
+          PUBLIC_IP=$(aws ec2 describe-instances --instance-ids ${INSTANCE_ID} --query "Reservations[0].Instances[0].PublicIpAddress" --output text)
+          if [ -z "$PUBLIC_IP" ]; then echo "Error: No public IP found for dev instance"; exit 1; fi
+          echo "public_ip=${PUBLIC_IP}" >> $GITHUB_OUTPUT
+
+      - name: Perform Smoke Test on Deployed Application
+        run: |
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ steps.get-ec2-ip.outputs.public_ip }})
+          if [ "$HTTP_STATUS" -eq 200 ]; then echo "Dev Smoke test successful!"; else echo "Dev Smoke test failed! HTTP status: $HTTP_STATUS"; exit 1; fi
